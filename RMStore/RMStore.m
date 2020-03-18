@@ -411,8 +411,10 @@ typedef void (^RMStoreSuccessBlock)(void);
     RMStoreLog(@"restored transactions failed with error %@", error.debugDescription);
     if (_restoreTransactionsFailureBlock != nil)
     {
-        _restoreTransactionsFailureBlock(error);
-        _restoreTransactionsFailureBlock = nil;
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            _restoreTransactionsFailureBlock(error);
+            _restoreTransactionsFailureBlock = nil;
+        }];
     }
     NSDictionary *userInfo = nil;
     if (error)
@@ -592,7 +594,9 @@ typedef void (^RMStoreSuccessBlock)(void);
     RMAddPaymentParameters *parameters = [self popAddPaymentParametersForIdentifier:productIdentifier];
     if (parameters.failureBlock != nil)
     {
-        parameters.failureBlock(transaction, error);
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            parameters.failureBlock(transaction, error);
+        }];
     }
     
     NSDictionary *extras = error ? @{RMStoreNotificationStoreError : error} : nil;
@@ -678,7 +682,9 @@ typedef void (^RMStoreSuccessBlock)(void);
     RMAddPaymentParameters *wrapper = [self popAddPaymentParametersForIdentifier:productIdentifier];
     if (wrapper.successBlock != nil)
     {
-        wrapper.successBlock(transaction);
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            wrapper.successBlock(transaction);
+        }];
     }
     
     [self postNotificationWithName:RMSKPaymentTransactionFinished transaction:transaction userInfoExtras:nil];
@@ -701,8 +707,10 @@ typedef void (^RMStoreSuccessBlock)(void);
         NSArray *restoredTransactions = [_restoredTransactions copy];
         if (_restoreTransactionsSuccessBlock != nil)
         {
-            _restoreTransactionsSuccessBlock(restoredTransactions);
-            _restoreTransactionsSuccessBlock = nil;
+            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                _restoreTransactionsSuccessBlock(restoredTransactions);
+                _restoreTransactionsSuccessBlock = nil;
+            }];
         }
         NSDictionary *userInfo = @{ RMStoreNotificationTransactions : restoredTransactions };
         [[NSNotificationCenter defaultCenter] postNotificationName:RMSKRestoreTransactionsFinished object:self userInfo:userInfo];
@@ -724,8 +732,10 @@ typedef void (^RMStoreSuccessBlock)(void);
     _refreshReceiptRequest = nil;
     if (_refreshReceiptSuccessBlock)
     {
-        _refreshReceiptSuccessBlock();
-        _refreshReceiptSuccessBlock = nil;
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            _refreshReceiptSuccessBlock();
+            _refreshReceiptSuccessBlock = nil;
+        }];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKRefreshReceiptFinished object:self];
 }
@@ -736,8 +746,10 @@ typedef void (^RMStoreSuccessBlock)(void);
     _refreshReceiptRequest = nil;
     if (_refreshReceiptFailureBlock)
     {
-        _refreshReceiptFailureBlock(error);
-        _refreshReceiptFailureBlock = nil;
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            _refreshReceiptFailureBlock(error);
+            _refreshReceiptFailureBlock = nil;
+        }];
     }
     NSDictionary *userInfo = nil;
     if (error)
@@ -804,7 +816,9 @@ typedef void (^RMStoreSuccessBlock)(void);
     
     if (self.successBlock)
     {
-        self.successBlock(products, invalidProductIdentifiers);
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            self.successBlock(products, invalidProductIdentifiers);
+        }];
     }
     NSDictionary *userInfo = @{RMStoreNotificationProducts: products, RMStoreNotificationInvalidProductIdentifiers: invalidProductIdentifiers};
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKProductsRequestFinished object:self.store userInfo:userInfo];
@@ -820,7 +834,9 @@ typedef void (^RMStoreSuccessBlock)(void);
     RMStoreLog(@"products request failed with error %@", error.debugDescription);
     if (self.failureBlock)
     {
-        self.failureBlock(error);
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            self.failureBlock(error);
+        }];
     }
     NSDictionary *userInfo = nil;
     if (error)
