@@ -424,8 +424,8 @@ typedef void (^RMStoreSuccessBlock)();
     if (_restoreTransactionsFailureBlock != nil)
     {
         [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-            _restoreTransactionsFailureBlock(error);
-            _restoreTransactionsFailureBlock = nil;
+            self._restoreTransactionsFailureBlock(error);
+            self._restoreTransactionsFailureBlock = nil;
         }];
     }
     NSDictionary *userInfo = nil;
@@ -706,8 +706,8 @@ typedef void (^RMStoreSuccessBlock)();
         if (_restoreTransactionsSuccessBlock != nil)
         {
             [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                _restoreTransactionsSuccessBlock(restoredTransactions);
-                _restoreTransactionsSuccessBlock = nil;
+                self._restoreTransactionsSuccessBlock(restoredTransactions);
+                self._restoreTransactionsSuccessBlock = nil;
             }];
         }
         NSDictionary *userInfo = @{ RMStoreNotificationTransactions : restoredTransactions };
@@ -731,8 +731,8 @@ typedef void (^RMStoreSuccessBlock)();
     if (_refreshReceiptSuccessBlock)
     {
         [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-            _refreshReceiptSuccessBlock();
-            _refreshReceiptSuccessBlock = nil;
+            self._refreshReceiptSuccessBlock();
+            self._refreshReceiptSuccessBlock = nil;
         }];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKRefreshReceiptFinished object:self];
@@ -745,8 +745,8 @@ typedef void (^RMStoreSuccessBlock)();
     if (_refreshReceiptFailureBlock)
     {
         [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-            _refreshReceiptFailureBlock(error);
-            _refreshReceiptFailureBlock = nil;
+            self._refreshReceiptFailureBlock(error);
+            self._refreshReceiptFailureBlock = nil;
         }];
     }
     NSDictionary *userInfo = nil;
